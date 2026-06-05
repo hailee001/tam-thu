@@ -3,263 +3,500 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lì Xì Đầu Năm - Trung Hải</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Gửi Bạn Chút Tâm Tư - Trung Hải</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        :root {
-            --primary: #ff3e3e;
-            --gold: #ffd700;
+        /* === RESET & CÀI ĐẶT CHUNG === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
         }
 
         body {
-            margin: 0;
-            background: radial-gradient(circle, #4a0000 0%, #000000 100%);
-            color: white;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            overflow: hidden; /* Chặn cuộn khi ở Intro */
+            background: #000;
+        }
+
+        /* === HIỆU ỨNG NỀN ĐỘNG (Dùng cho toàn web) === */
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #ff7eb3, #ff758c, #74ebd5, #acb6e5);
+            background-size: 400% 400%;
+            animation: meshGradient 15s ease infinite;
+        }
+
+        @keyframes meshGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Hạt lơ lửng trang trí */
+        .bubbles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
             overflow: hidden;
         }
-
-        .header-title {
-            text-align: center;
-            margin: 15px;
-            font-size: 1.8rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            text-shadow: 0 0 15px red;
-            animation: pulse 1s infinite alternate;
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: rise 10s infinite ease-in;
+        }
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); }
+            50% { transform: translateX(100px); }
+            100% { bottom: 1080px; transform: translateX(-200px); }
         }
 
-        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; transform: scale(1.02); } }
+        /* === TRANG MỞ ĐẦU (INTRO SCREEN) === */
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #ff0080, #7a00ff, #00d4ff);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
 
-        #auth-container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 20px;
+        #intro-screen h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 4rem;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            text-align: center;
+            animation: pulseText 2s infinite;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn-view-now {
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #7a00ff;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            animation: btnFloat 3s infinite ease-in-out;
+        }
+
+        .btn-view-now:hover {
+            transform: scale(1.1) rotate(3deg);
+            background: #ffecf2;
+            box-shadow: 0 15px 40px rgba(255,0,128,0.5);
+        }
+
+        @keyframes btnFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* === NỘI DUNG CHÍNH (MAIN APP) === */
+        #main-content {
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        /* DÒNG CHỮ CHẠY NGANG */
+        .marquee-container {
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            border: 2px solid var(--gold);
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-            margin-top: 50px;
+            padding: 12px 0;
+            position: fixed;
+            top: 0; width: 100%; z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 10px;
-            border: 1px solid var(--gold);
-            background: #000;
+        .marquee-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* MENU TABS */
+        .nav-tabs {
+            margin-top: 100px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: white;
+            color: #ff4757;
+        }
+
+        /* GRID THƯ */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .envelope-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.4s;
+        }
+
+        .envelope-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .envelope-icon { font-size: 3.5rem; margin-bottom: 15px; }
+        .envelope-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
             color: white;
         }
 
-        /* Wheel Styles */
-        .wheel-container {
-            position: relative;
-            width: 90vw;
-            max-width: 400px;
-            height: 90vw;
-            max-height: 400px;
-            margin-top: 30px;
-            display: none;
+        /* === CHỦ THƯ === */
+        .sender-info {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid var(--gold);
-            box-shadow: 0 0 30px rgba(255,0,0,0.5);
-            transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1);
-        }
-
-        .pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 35px solid var(--gold);
-            z-index: 10;
-            filter: drop-shadow(0 0 5px #000);
-        }
-
-        .spin-btn {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px; height: 60px;
-            background: var(--gold);
-            border-radius: 50%;
-            z-index: 15;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #b30000;
+        .social-btn {
+            display: block;
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 15px;
             font-weight: bold;
-            border: 3px solid #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+        .fb-btn { background: #1877f2; }
+        .tt-btn { background: #000; }
+        .ig-btn { background: linear-gradient(45deg, #f09433, #bc1888); }
+        .social-btn:hover { transform: scale(1.05); }
+
+        /* === MODAL NHẬP PASS VÀ THƯ === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
         }
 
-        button.main-btn {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white; padding: 10px 25px;
-            border: none; border-radius: 20px;
-            cursor: pointer; font-weight: bold;
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            width: 90%; max-width: 450px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
-        #status { margin-top: 10px; font-size: 14px; color: #00ff00; display: none; }
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+        }
+
+        /* Thông báo lỗi trong Web */
+        #error-msg {
+            color: #ff4757;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: none;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .letter-content {
+            background: #fffdf2;
+            padding: 30px;
+            border-radius: 15px;
+            max-height: 70vh;
+            overflow-y: auto;
+            text-align: left;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-line;
+        }
+
+        .btn-action {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            #intro-screen h1 { font-size: 2.5rem; }
+            .btn-view-now { font-size: 1.2rem; padding: 15px 35px; }
+        }
     </style>
 </head>
 <body>
 
-    <h1 class="header-title">🧧 LÌ XÌ ĐẦU NĂM 🧧</h1>
+    <div class="bg-animated"></div>
+    <div class="bubbles" id="bubble-container"></div>
 
-    <div id="auth-container">
-        <h3>Nhận Lộc Đầu Xuân</h3>
-        <input type="text" id="username" placeholder="Nhập tên của bạn...">
-        <button class="main-btn" onclick="register()">VÀO QUAY</button>
+    <audio id="bgMusic" src="tinh_ban_dep_nhat.mp3" loop></audio>
+
+    <div id="intro-screen">
+        <h1>Welcome To<br>My Heart ✨</h1>
+        <button class="btn-view-now" onclick="startApp()">Xem Ngay 💌</button>
     </div>
 
-    <div id="status"></div>
+    <div id="main-content">
+        <div class="marquee-container">
+            <marquee class="marquee-text" scrollamount="7">
+                ✨ 1 chút tâm tư của Trung Hải ! Chúc các bạn thi tốt nha ✨ Gửi ngàn lời chúc tốt đẹp nhất đến mọi người ✨
+            </marquee>
+        </div>
 
-    <div class="wheel-container" id="game-zone">
-        <div class="pointer"></div>
-        <canvas id="wheelCanvas"></canvas>
-        <div class="spin-btn" onclick="spin()">QUAY</div>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('home', event)">🏠 Trang chủ</button>
+            <button class="tab-btn" onclick="switchTab('info', event)">👦 Chủ thư</button>
+        </div>
+
+        <div id="home" class="tab-content" style="display: block;">
+            <div class="grid-container">
+                <div class="envelope-card" onclick="openPassModal('Khánh Linh')">
+                    <div class="envelope-icon">✨</div>
+                    <div class="envelope-name">Khánh Linh</div>
+                </div>
+                <div class="envelope-card" onclick="openPassModal('Quỳnh Chi')">
+                    <div class="envelope-icon">🌸</div>
+                    <div class="envelope-name">Quỳnh Chi</div>
+                </div>
+                <div class="envelope-card" onclick="openPassModal('Dung Phạm')">
+                    <div class="envelope-icon">🍀</div>
+                    <div class="envelope-name">Dung Phạm</div>
+                </div>
+                <div class="envelope-card" onclick="openPassModal('Linh Giang')">
+                    <div class="envelope-icon">🦄</div>
+                    <div class="envelope-name">Linh Giang</div>
+                </div>
+                <div class="envelope-card" onclick="openPassModal('Hà Giang')">
+                    <div class="envelope-icon">🌈</div>
+                    <div class="envelope-name">Hà Giang</div>
+                </div>
+                <div class="envelope-card" onclick="openPassModal('Thảo Uyên')">
+                    <div class="envelope-icon">💖</div>
+                    <div class="envelope-name">Thảo Uyên</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="info" class="tab-content" style="display: none;">
+            <div class="sender-info">
+                <h2 style="font-family: 'Pacifico'; font-size: 2.5rem; margin-bottom: 15px;">Trung Hải</h2>
+                <p>Mãi là những người bạn tốt nhất!</p>
+                <hr style="margin: 20px 0; opacity: 0.3;">
+                <div class="social-links">
+                    <a href="https://www.facebook.com/trunghai260508" target="_blank" class="social-btn fb-btn"><i class="fab fa-facebook"></i> Facebook</a>
+                    <a href="#" class="social-btn tt-btn"><i class="fab fa-tiktok"></i> TikTok: Coming Soon</a>
+                    <a href="#" class="social-btn ig-btn"><i class="fab fa-instagram"></i> Instagram: Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="passModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-target-name" style="color: #ff4757; font-family: 'Dancing Script'; font-size: 2.2rem;"></h2>
+            <input type="password" id="passwordInput" placeholder="Nhập mật mã bí mật...">
+            <div id="error-msg">Mật mã không đúng rồi! ❌</div>
+            <button class="btn-action" onclick="checkPassword()">Mở Thư 🔓</button>
+            <button class="btn-action" style="background: #999;" onclick="closeModal('passModal')">Đóng</button>
+        </div>
+    </div>
+
+    <div id="letterModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h2 id="letter-title" style="margin-bottom: 15px; color: #ff4757; font-family: 'Pacifico';"></h2>
+            <div class="letter-content" id="letter-text">
+                </div>
+            <button class="btn-action" style="margin-top: 20px;" onclick="closeModal('letterModal')">Gấp thư lại 💌</button>
+        </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-        // Mảng phần thưởng khớp với hình ảnh vẽ
-        const prizes = ["5k", "10k", "15k", "20k", "25k", "30k", "35k", "40k", "45k", "50k", "55k", "60k"];
-        const colors = ["#e74c3c", "#3498db", "#f1c40f", "#2ecc71", "#9b59b6", "#e67e22", "#1abc9c", "#34495e", "#d35400", "#c0392b", "#8e44ad", "#27ae60"];
-        
-        let currentRotation = 0;
-        let isSpinning = false;
-        let user = null;
+        // --- DỮ LIỆU THƯ ---
+        const data = {
+            'Khánh Linh': { pass: '3004', content: 'Chào Khánh Linh,\n\nViết thư cho Linh vào đây nè...\nChúc Linh thi tốt và luôn xinh đẹp nhé!' },
+            'Quỳnh Chi': { pass: '0103', content: `Gửi Quỳnh Chi – "chihuahua" nhỏ của lớp mình,
 
-        function drawWheel() {
-            const size = 500;
-            canvas.width = size;
-            canvas.height = size;
-            const center = size / 2;
-            const arc = (Math.PI * 2) / prizes.length;
+Ngồi viết mấy dòng này mà tớ cứ thấy lạ lạ, vì chẳng ngờ là thời gian lại trôi nhanh thế. Mới ngày nào chúng mình còn lạ lẫm, thế mà chớp mắt một cái đã hết một năm học rồi. Thật lòng thì, nếu không có cái sự tình cờ là quen cậu thông qua người đặc biệt ấy – người mà tớ biết là cả đời này tớ cũng chẳng bao giờ quên được – thì có lẽ tớ đã mất đi một người bạn thú vị như cậu rồi.
 
-            prizes.forEach((prize, i) => {
-                const angle = i * arc;
-                ctx.beginPath();
-                ctx.fillStyle = colors[i];
-                ctx.moveTo(center, center);
-                ctx.arc(center, center, center, angle, angle + arc);
-                ctx.lineTo(center, center);
-                ctx.fill();
-                ctx.strokeStyle = "rgba(255,255,255,0.2)";
-                ctx.stroke();
+Cảm ơn cậu nhé, vì đã xuất hiện trong năm cuối cấp này, vì đã luôn là một "chihuahua" hài hước, lúc nào cũng mang đến tiếng cười dù nch có hơi láo. Nhưng mà đừng bao giờ đánh mất cái sự lạc quan, dí dỏm ấy nhé, vì nó là một món quà đặc biệt mà cậu dành cho những người xung quanh đấy.1 năm cũng kh quá dài để tớ hiểu được hết tính cách của Chù nhưng mà tớ luôn cảm thấy những lời trên là đúng khi nhận xét về cậu
 
-                ctx.save();
-                ctx.translate(center, center);
-                ctx.rotate(angle + arc / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = "white";
-                ctx.font = "bold 25px Arial";
-                ctx.fillText(prize, center - 40, 10);
-                ctx.restore();
-            });
+Sắp tới là kỳ thi quan trọng rồi, tớ biết ai cũng đang gồng mình lên để chạy nước rút. Tớ không chúc cậu "học đâu nhớ đó" hay những thứ cao siêu đâu, tớ chỉ mong cậu giữ gìn sức khỏe, giữ vững cái tinh thần chiến đấu mạnh mẽ vốn có của mình để bước vào phòng thi với tâm thế thoải mái nhất. Cố gắng hết sức mình nhé, để không phải hối tiếc bất cứ điều gì. Tớ tin là "chihuahua" sẽ làm được thôi, tỏa sáng rực rỡ như cách cậu vẫn thường làm nhé!
+
+Dù sau này mỗi đứa một nơi, dù cuộc sống có xoay vần thế nào, thì hãy nhớ là chúng mình đã từng có một năm học thật đẹp bên nhau. Cảm ơn cậu vì đã là một phần kỷ niệm trong quãng đời thanh xuân này của tớ. Vào HCM chơi thì alo anh lớn này nhé
+
+Thi thật tốt nhé, Quỳnh Chi! Chờ ngày chúng mình cùng ăn mừng thành quả!` },
+            'Dung Phạm': { pass: '1105', content: `Chào Dung Phạm ( bé Thuần , bé Ái ),
+
+Ngồi viết những dòng này cho cậu, tớ cứ nhìn mãi về cái ngày tớ mới chuyển vào lớp 12. Thú thật lúc đó tớ lo lắm, sợ cảm giác lạc lõng giữa một tập thể đã thân thiết từ lâu. Thế mà, chính cậu là người đã phá tan khoảng cách ấy. Cảm ơn cậu, vì đã không ngần ngại đón nhận tớ, cảm ơn vì đã cho tớ cảm giác được thuộc về nơi này.Từ 2 người xa lạ tớ không biết mở lời như thế nào chính cậu là người đã mở lời trước giúp tớ có them sự tự tin hơn 
+
+Nói thật, trong mắt tớ, Dung Thuần là một người rất caS tính , năng động hoạt bát. Cái tính của cậu "lạ" lắm, vừa hài hước, vui vẻ, lại vừa hay nổi nóng những lúc trái gió trở trời – nhưng chính những lúc cậu cáu gắt ấy, tớ lại càng thấy cậu chân thật và đáng quý biết bao nhiêu. Cậu là đứa hòa đồng, luôn biết cách làm cho mọi người xung quanh cảm thấy thoải mái, còn tớ thì biết ơn cậu nhiều lắm vì đã luôn kiên nhẫn với một đứa "đẳng cấp provip :))" như tớ.
+
+Tớ sẽ nhớ mãi những buổi chiều chúng mình cùng nhau học nhóm. Mà cậu biết không, nhiều khi mục đích chính chẳng phải là học đâu, mà là để được ngồi bên nhau, rồi cùng nhau nấu xói "đứa này đứa kia", những khoảnh khắc vô tư đó, đối với tớ mà nói, nó còn quý giá hơn cả điểm số hay những trang sách vở ( vì tớ tra gu lồ nên không lo ). Cảm ơn cậu đã làm cho quãng thời gian lớp 12 của tớ không chỉ là áp lực thi cử, mà còn là áp lực vì bị đấm và chửi hihi đùa thui tớ cảm thấy rằng đó là một khoảng trời thanh xuân rực rỡ nhất.
+
+Giờ đây, khi kỳ thi quan trọng đang đến rất gần, tớ biết cậu cũng đang phải gồng mình lên để đối mặt với bao nhiêu lo âu. Tớ chỉ muốn chúc cậu thật bình tĩnh và tự tin vào chính mình. Dù kết quả thế nào, thì với tớ, cậu đã luôn là một người bạn tuyệt vời nhất rồi. Hãy cố gắng hết sức để không phải nuối tiếc, và hứa với tớ là dù sau này có bận rộn thế nào, cũng đừng quên mất những kỷ niệm mà chúng mình đã cùng nhau vun đắp nhé.
+
+Thi thật tốt nhé, Dung ( Thuần ). Tớ tin cậu sẽ làm được, 7+ toán nha.` },
+            'Linh Giang': { pass: '2504', content: 'Gửi Linh Giang,\n\nThư của Giang đây...\nChúc Giang đạt kết quả cao nhất!' },
+            'Hà Giang': { pass: '2209', content: 'Chào Hà Giang,\n\nLời nhắn cho Hà Giang...\nThi thật tốt và bình tĩnh nha!' },
+            'Thảo Uyên': { pass: '2505', content: 'Gửi Thảo Uyên,\n\nNội dung thư cho Uyên...\nChúc mọi điều may mắn đến với Uyên!' }
+        };
+
+        let currentTarget = "";
+
+        // --- TẠO HẠT BUBBLE NỀN ---
+        function createBubbles() {
+            const container = document.getElementById('bubble-container');
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 60 + 20 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = Math.random() * 5 + 5 + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(bubble);
+            }
         }
+        createBubbles();
 
-        function register() {
-            const name = document.getElementById('username').value.trim();
-            if (!name) return;
+        // --- HÀM BẮT ĐẦU APP (SAU KHI ẤN XEM NGAY) ---
+        function startApp() {
+            const intro = document.getElementById('intro-screen');
+            intro.style.transform = 'translateY(-100%)';
             
-            user = { name: name, spins: 0 };
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('game-zone').style.display = 'block';
-            document.getElementById('status').style.display = 'block';
-            updateStatus();
-            drawWheel();
+            const main = document.getElementById('main-content');
+            main.style.opacity = '1';
+            document.body.style.overflow = 'auto';
+
+            const music = document.getElementById('bgMusic');
+            music.play().catch(() => console.log("Yêu cầu tương tác để phát nhạc"));
         }
 
-        function updateStatus() {
-            document.getElementById('status').innerText = `Người chơi: ${user.name} | Lượt quay: ${user.spins}`;
+        // --- CHUYỂN TAB ---
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            event.currentTarget.classList.add('active');
         }
 
-        function spin() {
-            if (isSpinning) return;
-            isSpinning = true;
-            user.spins++;
-            updateStatus();
+        // --- MODAL PASS ---
+        function openPassModal(name) {
+            currentTarget = name;
+            document.getElementById('modal-target-name').innerText = "Gửi " + name;
+            document.getElementById('passwordInput').value = "";
+            document.getElementById('error-msg').style.display = 'none';
+            document.getElementById('passModal').style.display = 'flex';
+        }
 
-            let prizeIdx;
-            const rand = Math.random() * 100;
-
-            // Logic xác suất yêu cầu
-            if (user.spins === 2) {
-                prizeIdx = Math.random() > 0.5 ? 7 : 11; // 40k hoặc 60k
-            } else if (user.spins === 4) {
-                prizeIdx = 10; // 55k
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const error = document.getElementById('error-msg');
+            
+            if (input === data[currentTarget].pass) {
+                closeModal('passModal');
+                openLetter(currentTarget);
             } else {
-                if (rand < 1) prizeIdx = 6; // 35k
-                else if (rand < 5) prizeIdx = 3; // 20k
-                else if (rand < 40) prizeIdx = 2; // 15k
-                else if (rand < 80) prizeIdx = 1; // 10k
-                else prizeIdx = 0; // 5k
+                error.style.display = 'block';
+                document.getElementById('passwordInput').style.borderColor = '#ff4757';
+                setTimeout(() => {
+                    document.getElementById('passwordInput').style.borderColor = '#ddd';
+                }, 500);
             }
-
-            // FIX LỖI LỆCH TẠI ĐÂY:
-            const arcDeg = 360 / prizes.length; // Mỗi ô 30 độ
-            const extraSpins = 3600; // Quay 10 vòng
-            
-            // 270 là vị trí Kim ở đỉnh. 
-            // (prizeIdx * arcDeg) là vị trí bắt đầu của ô trúng.
-            // (arcDeg / 2) để kim chỉ vào chính giữa ô.
-            const targetPos = 270 - (prizeIdx * arcDeg) - (arcDeg / 2);
-            
-            // Tính toán rotation mới dựa trên rotation hiện tại để không bị quay ngược
-            currentRotation += extraSpins + (targetPos - (currentRotation % 360));
-
-            canvas.style.transform = `rotate(${currentRotation}deg)`;
-
-            setTimeout(() => {
-                isSpinning = false;
-                showResult(prizes[prizeIdx]);
-            }, 5000);
         }
 
-        function showResult(prize) {
-            const val = parseInt(prize);
-            if (val >= 20) {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            }
-
-            Swal.fire({
-                title: `TRÚNG ${prize}!`,
-                html: `Chúc mừng <b>${user.name}</b>!<br><br><small>Liên hệ Trung Hải và gửi mã QR, lấy lộc đầu năm nên hoan hỉ nhé ạ tất cả là tùy vào nhân phẩm mỗi người ạ!!</small>`,
-                icon: val >= 20 ? 'success' : (val >= 10 ? 'info' : 'error'),
-                background: '#2c0000',
-                color: '#fff',
-                confirmButtonColor: '#ff3e3e'
-            });
-
-            sendTele(prize);
+        function openLetter(name) {
+            document.getElementById('letter-title').innerText = "Thư gửi " + name;
+            document.getElementById('letter-text').innerText = data[name].content;
+            document.getElementById('letterModal').style.display = 'flex';
         }
 
-        function sendTele(prize) {
-            const token = "8247031947:AAHcOmle1n0X9L9Elyjy-rdJRBz2COJ0eN4";
-            const chatId = "7829265174";
-            const text = `🧧 LÌ XÌ MỚI 🧧\n👤: ${user.name}\n🎁: ${prize}\n🔄 Lượt: ${user.spins}`;
-            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`);
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
         }
     </script>
 </body>
