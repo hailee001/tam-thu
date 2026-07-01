@@ -111,6 +111,74 @@
             50% { transform: translateY(-10px); }
         }
 
+        /* === MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ (AUTH SCREEN) === */
+        #auth-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            z-index: 9990;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-container h2 {
+            font-family: 'Pacifico', cursive;
+            color: #ff4757;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .auth-input:focus {
+            border-color: #ff4757;
+        }
+
+        .auth-link {
+            color: #7a00ff;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .auth-msg {
+            color: #ff4757;
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        .auth-success {
+            color: #2ed573;
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
         /* === NỘI DUNG CHÍNH (MAIN APP) === */
         #main-content {
             opacity: 0;
@@ -189,8 +257,9 @@
 
         .envelope-icon { font-size: 3.5rem; margin-bottom: 15px; }
         .envelope-name {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.8rem;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
             color: white;
         }
 
@@ -296,7 +365,7 @@
             margin-top: 10px;
         }
 
-        /* ================= CÁC HIỆU ỨNG ĐẶC BIỆT CHO ANH DUY ================= */
+        /* ================= CÁC HIỆU ỨNG ĐẶC BIỆT ================= */
         
         /* 1. Hiệu ứng mở thư (Nhảy popup) */
         @keyframes openEnvelopePopup {
@@ -308,7 +377,7 @@
             animation: openEnvelopePopup 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        /* 2. Hiệu ứng nền lửa cháy bập bùng */
+        /* 2. Hiệu ứng nền lửa cháy bập bùng (Anh Duy) */
         @keyframes fireFlicker {
             0% { background-color: #3d0b00; box-shadow: inset 0 0 50px rgba(255, 68, 0, 0.6); }
             50% { background-color: #5c1000; box-shadow: inset 0 0 100px rgba(255, 102, 0, 0.9); }
@@ -336,6 +405,19 @@
             animation: rainbowFlow 3s linear infinite;
         }
 
+        /* 4. Hiệu ứng nền lấp lánh huyền ảo (Uyên Xèo) */
+        @keyframes magicGlow {
+            0% { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); box-shadow: inset 0 0 40px rgba(255, 105, 180, 0.5); }
+            50% { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); box-shadow: inset 0 0 70px rgba(0, 191, 255, 0.6); }
+            100% { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); box-shadow: inset 0 0 40px rgba(147, 112, 219, 0.5); }
+        }
+        .beautiful-background {
+            animation: magicGlow 4s infinite alternate !important;
+            color: #fff !important;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.6) !important;
+            border: 2px solid #ff69b4;
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             #intro-screen h1 { font-size: 2.5rem; }
@@ -350,11 +432,37 @@
 
     <audio id="bgMusic" src="tinh_ban_dep_nhat.mp3" loop></audio>
 
+    <!-- MÀN HÌNH CHÀO MỪNG -->
     <div id="intro-screen">
         <h1>Welcome To<br>My Heart ✨</h1>
         <button class="btn-view-now" onclick="startApp()">Xem Ngay 💌</button>
     </div>
 
+    <!-- MÀN HÌNH ĐĂNG KÝ / ĐĂNG NHẬP -->
+    <div id="auth-screen">
+        <!-- Form Đăng Nhập -->
+        <div class="auth-container" id="login-box">
+            <h2>Đăng Nhập 🔑</h2>
+            <input type="text" class="auth-input" id="login-username" placeholder="Tên tài khoản...">
+            <input type="password" class="auth-input" id="login-password" placeholder="Mật khẩu...">
+            <div class="auth-msg" id="login-error"></div>
+            <button class="btn-action" style="width: 100%; padding: 15px; margin-top: 10px;" onclick="handleLogin()">Vào Xem Thư 🔓</button>
+            <p class="auth-link" onclick="toggleAuthForm('register')">Chưa có tài khoản? Đăng ký ngay</p>
+        </div>
+
+        <!-- Form Đăng Ký -->
+        <div class="auth-container" id="register-box" style="display: none;">
+            <h2>Đăng Ký 📝</h2>
+            <input type="text" class="auth-input" id="register-username" placeholder="Tạo tên tài khoản...">
+            <input type="password" class="auth-input" id="register-password" placeholder="Tạo mật khẩu...">
+            <div class="auth-msg" id="register-error"></div>
+            <div class="auth-success" id="register-success"></div>
+            <button class="btn-action" style="width: 100%; padding: 15px; margin-top: 10px;" onclick="handleRegister()">Tạo Tài Khoản ✨</button>
+            <p class="auth-link" onclick="toggleAuthForm('login')">Đã có tài khoản? Đăng nhập</p>
+        </div>
+    </div>
+
+    <!-- NỘI DUNG ỨNG DỤNG CHÍNH -->
     <div id="main-content">
         <div class="marquee-container">
             <marquee class="marquee-text" scrollamount="7">
@@ -406,6 +514,10 @@
                     <div class="envelope-icon">🍃</div>
                     <div class="envelope-name">Hà An</div>
                 </div>
+                <div class="envelope-card" onclick="openPassModal('Uyên Xèo')">
+                    <div class="envelope-icon">💝</div>
+                    <div class="envelope-name">Uyên Xèo</div>
+                </div>
                 <div class="envelope-card" onclick="openPassModal('Duy Vũ')">
                     <div class="envelope-icon">🔥</div>
                     <div class="envelope-name">Duy Vũ</div>
@@ -447,6 +559,7 @@
         </div>
     </div>
 
+    <!-- MODAL NHẬP PASS TỪNG THƯ -->
     <div id="passModal" class="modal">
         <div class="modal-content">
             <h2 id="modal-target-name" style="color: #ff4757; font-family: 'Dancing Script'; font-size: 2.2rem;"></h2>
@@ -457,11 +570,11 @@
         </div>
     </div>
 
+    <!-- MODAL HIỂN THỊ NỘI DUNG THƯ -->
     <div id="letterModal" class="modal">
         <div class="modal-content" id="letter-modal-box" style="max-width: 600px;">
             <h2 id="letter-title" style="margin-bottom: 15px; color: #ff4757; font-family: 'Pacifico';"></h2>
-            <div class="letter-content" id="letter-text">
-                </div>
+            <div class="letter-content" id="letter-text"></div>
             <button class="btn-action" style="margin-top: 20px;" onclick="closeModal('letterModal')">Gấp thư lại 💌</button>
         </div>
     </div>
@@ -472,27 +585,27 @@
             'Khánh Linh': { pass: '3004', content: `Chào Khánh Linh ( Linh B... ),\n\nViết cho cậu những dòng này, tự nhiên tớ thấy mọi thứ cứ như một giấc mơ vậy. Cả đời học sinh trôi qua, chẳng hiểu sao đến đúng năm cuối cấp, khi tớ mới chân ướt chân ráo chuyển vào lớp, thì định mệnh lại sắp đặt cho chúng mình được chung lớp, thậm chí còn là… ngồi cùng bàn nữa chứ.\n\nThú thật với cậu, những ngày đầu mới vào lớp, tớ sợ cậu lắm! Cậu lúc đó trong mắt tớ vừa có nét gì đó "lạnh lùng", xa cách, lại vừa bí ẩn khiến tớ chẳng dám mở lời. Vậy mà, chính cậu là người đã chủ động bắt chuyện trước, xóa tan đi cái khoảng cách ngượng ngùng giữa hai đứa. Cảm ơn cậu vì đã kiên nhẫn với một đứa mới chuyển đến còn đầy bỡ ngỡ và nhút nhát như tớ. Cảm ơn cậu vì đã cho tớ thấy đằng sau vẻ ngoài có phần "lạnh" ấy là một cô bạn cực kỳ vui tính, hay cười và chân thành đến mức nào.\n\nTớ vẫn không hiểu rang tại sao chúng ta không gặp nhau sớm hơn hay là do duyên số nên chúng mình mới gặp nhau muộn thế, nhưng dù muộn thì cậu vẫn là một món quà tuyệt vời nhất của năm lớp 12 này. Những lúc được ngồi cạnh cậu, nhìn cậu cười, được cậu chia sẻ đủ chuyện trên đời,được chỉ cậu những bài toán khó tớ mới nhận ra mình đã may mắn thế nào khi có một người bạn đồng hành như cậu mặc dù không giúp đỡ được gì nhiều cho cậu mà còn hay chọc cậu nữa chớ :)) .\n\nKỳ thi sắp tới rồi, tớ biết đây là giai đoạn chúng mình phải nỗ lực rất nhiều. Chúc cậu giữ vững tinh thần, ôn tập thật tốt và bước vào phòng thi với phong thái tự tin nhất. Dù sau này mỗi đứa một hướng, nhưng hãy nhớ rằng chúng mình đã có một năm cuối cấp thật đáng nhớ bên nhau, ngồi cùng bàn và cùng sẻ chia những áp lực, những niềm vui nhỏ bé của tuổi học trò.\n\nCảm ơn vì đã trở thành một phần đặc biệt trong thanh xuân của tớ, Khánh Linh nhé. Chúc cậu thi thật tốt và đạt được tất cả những gì cậu mong muốn. Cố lên, tớ tin cậu sẽ làm được! Tạm Biệt Và Hẹn Gặp Lại Vào 1 Tương Lai Gần` },
             'Quỳnh Chi': { pass: '0103', content: `Gửi Quỳnh Chi – "chihuahua" nhỏ của lớp mình,\n\nNgồi viết mấy dòng này mà tớ cứ thấy lạ lạ, vì chẳng ngờ là thời gian lại trôi nhanh thế. Mới ngày nào chúng mình còn lạ lẫm, thế mà chớp mắt một cái đã hết một năm học rồi. Thật lòng thì, nếu không có cái sự tình cờ là quen cậu thông qua người đặc biệt ấy – người mà tớ biết là cả đời này tớ cũng chẳng bao giờ quên được – thì có lẽ tớ đã mất đi một người bạn thú vị như cậu rồi.\n\nCảm ơn cậu nhé, vì đã xuất hiện trong năm cuối cấp này, vì đã luôn là một "chihuahua" hài hước, lúc nào cũng mang đến tiếng cười dù nch có hơi láo. Nhưng mà đừng bao giờ đánh mất cái sự lạc quan, dí dỏm ấy nhé, vì nó là một món quà đặc biệt mà cậu dành cho những người xung quanh đấy.1 năm cũng kh quá dài để tớ hiểu được hết tính cách của Chù nhưng mà tớ luôn cảm thấy những lời trên là đúng khi nhận xét về cậu\n\nSắp tới là kỳ thi quan trọng rồi, tớ biết ai cũng đang gồng mình lên để chạy nước rút. Tớ không chúc cậu "học đâu nhớ đó" hay những thứ cao siêu đâu, tớ chỉ mong cậu giữ gìn sức khỏe, giữ vững cái tinh thần chiến đấu mạnh mẽ vốn có của mình để bước vào phòng thi với tâm thế thoải mái nhất. Cố gắng hết sức mình nhé, để không phải hối tiếc bất cứ điều gì. Tớ tin là "chihuahua" sẽ làm được thôi, tỏa sáng rực rỡ như cách cậu vẫn thường làm nhé!\n\nDù sau này mỗi đứa một nơi, dù cuộc sống có xoay vần thế nào, thì hãy nhớ là chúng mình đã từng có một năm học thật đẹp bên nhau. Cảm ơn cậu vì đã là một phần kỷ niệm trong quãng đời thanh xuân này của tớ. Vào HCM chơi thì alo anh lớn này nhé\n\nThi thật tốt nhé, Quỳnh Chi! Chờ ngày chúng mình cùng ăn mừng thành quả!` },
             'Dung Phạm': { pass: '1105', content: `Chào Dung Phạm ( bé Thuần , bé Ái ),\n\nNgồi viết những dòng này cho cậu, tớ cứ nhìn mãi về cái ngày tớ mới chuyển vào lớp 12. Thú thật lúc đó tớ lo lắm, sợ cảm giác lạc lõng giữa một tập thể đã thân thiết từ lâu. Thế mà, chính cậu là người đã phá tan khoảng cách ấy. Cảm ơn cậu, vì đã không ngần ngại đón nhận tớ, cảm ơn vì đã cho tớ cảm giác được thuộc về nơi này.Từ 2 người xa lạ tớ không biết mở lời như thế nào chính cậu là người đã mở lời trước giúp tớ có them sự tự tin hơn \n\nNói thật, trong mắt tớ, Dung Thuần là một người rất caS tính , năng động hoạt bát. Cái tính của cậu "lạ" lắm, vừa hài hước, vui vẻ, lại vừa hay nổi nóng những lúc trái gió trở trời – nhưng chính những lúc cậu cáu gắt ấy, tớ lại càng thấy cậu chân thật và đáng quý biết bao nhiêu. Cậu là đứa hòa đồng, luôn biết cách làm cho mọi người xung quanh cảm thấy thoải mái, còn tớ thì biết ơn cậu nhiều lắm vì đã luôn kiên nhẫn với một đứa "đẳng cấp provip :))" như tớ.\n\nTớ sẽ nhớ mãi những buổi chiều chúng mình cùng nhau học nhóm. Mà cậu biết không, nhiều khi mục đích chính chẳng phải là học đâu, mà là để được ngồi bên nhau, rồi cùng nhau nấu xói "đứa này đứa kia", những khoảnh khắc vô tư đó, đối với tớ mà nói, nó còn quý giá hơn cả điểm số hay những trang sách vở ( vì tớ tra gu lồ nên không lo ). Cảm ơn cậu đã làm cho quãng thời gian lớp 12 của tớ không chỉ là áp lực thi cử, mà còn là áp lực vì bị đấm và chửi hihi đùa thui tớ cảm thấy rằng đó là một khoảng trời thanh xuân rực rỡ nhất.\n\nGiờ đây, khi kỳ thi quan trọng đang đến rất gần, tớ biết cậu cũng đang phải gồng mình lên để đối mặt với bao nhiêu lo âu. Tớ chỉ muốn chúc cậu thật bình tĩnh và tự tin vào chính mình. Dù kết quả thế nào, thì với tớ, cậu đã luôn là một người bạn tuyệt vời nhất rồi. Hãy cố gắng hết sức để không phải nuối tiếc, và hứa với tớ là dù sau này có bận rộn thế nào, cũng đừng quên mất những kỷ niệm mà chúng mình đã cùng nhau vun đắp nhé.\n\nThi thật tốt nhé, Dung ( Thuần ). Tớ tin cậu sẽ làm được, 7+ toán nha.` },
-            'Linh Giang': { pass: '2504', content: `Chào Linh Giang,\n\nNói thật là đến giờ tớ mới ngồi viết những dòng này, cứ viết rồi lại xóa vì không biết bắt đầu sao cho "đúng điệu" mà không bị sến quá. Nhưng thôi, cứ nói thẳng những gì tớ đang nghĩ vậy nhé.\n\nNhìn lại một năm qua, tớ thấy mình may mắn thật. Ngày đầu tớ bước vào lớp, lúc còn đang nghệch mặt ra vì chưa quen ai thì chính cậu – một cô nàng lúc nào cũng năng lượng, vui vẻ – đã chủ động bắt chuyện với tớ. Nhờ cái sự "nhiều chuyện" (theo nghĩa tích cực nhé!) và thân thiện của cậu mà tớ mới đỡ thấy lạc lõng, nhanh chóng hòa nhập được với lớp mình. Cảm ơn cậu vì đã luôn giúp đỡ, nhiệt tình với tớ suốt cả năm qua. Tớ rất trân trọng tình bạn này, thật sự đấy!\n\nSắp tới thi cử căng thẳng rồi, tớ chúc cậu ôn thi thật tốt, giữ cái đầu lạnh và trái tim nóng nhé. Cứ tự tin làm bài, đừng áp lực quá, tớ tin sự thông minh của cậu sẽ giúp cậu vượt qua kỳ thi này nhẹ nhàng thôi.\n\nSau này dù mỗi đứa một nơi, học một trường hay theo đuổi dự định riêng, tớ vẫn mong cậu luôn giữ được sự lạc quan, hoạt bát như bây giờ. Chúc cậu trên chặng đường phía trước sẽ luôn gặp toàn chuyện vui, thuận lợi và gặt hái được nhiều thành công rực rỡ.\n\nCảm ơn cậu vì đã là một người bạn tuyệt vời trong năm học qua, Linh Giang nhé!` },
+            'Linh Giang': { pass: '2504', content: `Chào Linh Giang,\n\nNói thật là đến giờ tớ mới ngồi viết những dòng này, cứ viết rồi lại xóa vì không biết bắt đầu sao cho "đúng điệu" mà không bị sến quá. Nhưng thôi, cứ nói thẳng những gì tớ đang nghĩ vậy nhé.\n\nNhìn lại một năm qua, tớ thấy mình may mắn thật. Ngày đầu tớ bước vào lớp, lúc còn đang nghệch mặt ra vì chưa quen ai thì chính cậu – một cô nàng lúc nào cũng năng lượng, vui vẻ – đã chủ động bắt chuyện với tớ. Nhờ cái sự "nhiều chuyện" (theo nghĩa tích cực nhé!) và thân thiện của cậu mà tớ mới đỡ thấy lạc lõng, nhanh chóng hòa nhập được với lớp mình. Cảm ơn cậu vì đã luôn giúp đỡ, nhiệt tình với tớ suốt cả năm qua. Tớ rất trân trọng tình bạn này, thật sự đấy!\n\nSắp tới thi cử căng thẳng rồi, tớ chúc cậu ôn thi thật tốt, giữ cái đầu lạnh và trái tim nóng nhé. Cứ tự tin làm bài, đừng áp lực quá, tớ tin sự thông minh của cậu sẽ giúp cậu vượt qua kỳ thi này nhẹ nhàng thôi.\n\nAfter này dù mỗi đứa một nơi, học một trường hay theo đuổi dự định riêng, tớ vẫn mong cậu luôn giữ được sự lạc quan, hoạt bát như bây giờ. Chúc cậu trên chặng đường phía trước sẽ luôn gặp toàn chuyện vui, thuận lợi và gặt hái được nhiều thành công rực rỡ.\n\nCảm ơn cậu vì đã là một người bạn tuyệt vời trong năm học qua, Linh Giang nhé!` },
             'Hà Giang': { pass: '2209', content: `Chào Hà Giang,\n\nTự nhiên ngồi nghĩ lại một năm qua, thấy thời gian trôi nhanh thật. Viết mấy dòng này cho cậu, tớ chỉ muốn nói là rất vui vì năm nay được làm bạn với cậu.\n\nHồi đầu mới vào lớp, tớ còn lạ lẫm, may mà có cậu lúc nào cũng hoạt bát, thân thiện, chủ động bắt chuyện với tớ trước. Cảm ơn cậu đã nhiệt tình giúp đỡ tớ trong suốt một năm qua, nhờ có cậu mà tớ thấy tự nhiên và đỡ ngại hơn hẳn.Cảm ơn vì những buổi học vì những ngày chúng mình đồng hành cùng nhau chinh chiến :)).\n\nTất nhiên là có đôi lúc cậu cũng hơi "nóng tính" tí xíu, làm tớ cũng hơi rén :>>, nhưng mà tớ hiểu đó là tính thẳng thắn của cậu thôi, không có gì cả. Với tớ thì chính vì cậu thẳng thắn như thế nên mới là một người bạn đáng quý. Tớ rất trân trọng tình bạn của tụi mình trong suốt thời gian vừa qua.\n\nSắp tới thi cử rồi, chúc cậu ôn bài thật tốt, giữ vững tâm lý để làm bài ngon lành. Chúc cậu sau này sẽ đạt được những dự định mình mong muốn và gặt hái được nhiều thành công trên con đường sắp tới nhé.\n\nCảm ơn vì đã là một người bạn tuyệt vời của tớ trong năm học qua!` },
             'Thảo Uyên': { pass: '2505', content: `Gửi Thảo Uyên – "Lè- lè Khe" hay còn được gọi "Misa" :))\n\nNghĩ lại mới thấy, một năm học trôi qua nhanh như một cái chớp mắt, vậy mà tớ với cậu đã từ hai người xa lạ trở thành những đứa bạn không thể thiếu trong năm cuối cấp này rồi.duyên của trời anh đã mặc dần Trôi có lẽ ông trời đã định sẵn chúng ta chỉ học với nhau có 1 năm thôi nhưng thật may mắn vì đó là năm học cuối cùng của thời hocj sinh . Dù mới đầu năm học chúng ta khas xa cach và it \n\nThú thật, ấn tượng đầu tiên của tớ về cậu là một cô gái lúc nào cũng đầy năng lượng, đi đến đâu là tiếng cười rộn ràng đến đó. Cậu hòa đồng, vui vẻ, và đặc biệt là cái hay trêu chọc mọi người, đcc biet là cái tên " milu " m đặt cho tớ :)). Nhưng cũng nhờ vậy mà tớ mới biết, đằng sau sự lầy lội ấy là một Thảo Uyên cực kỳ ấm áp và chân thành. À, mà phải nhắc đến "cam người ngoài hành tinh" của cậu nữa chứ – chiếc camera thần thánh siêu bóp mặt, làm mịn 100% , mặt như yên xe đạp hoặc người ngoài hành tinh mỗi lần cậu lôi ra là cả bọn lại được dịp cười lăn cười bò vì thành phẩm " mặt như yên xe" nhưng vô cùng đáng yêu của nó. Tất nhiên là tớ có vài tấm tự sướng với nó rồi :))\n\nTớ vẫn trân trọng những buổi chúng mình cùng nhau ngồi học riêng. Những lúc đó, dù bài vở có chất đống hay áp lực thi cử bủa vây, tớ vẫn thấy nhẹ lòng vì có cậu đồng hành. Học thì ít mà tám chuyện thì nhiều, vừa có nấu xói vừa có kể chuyện những tiếng cười ấy chính là "liều thuốc" giúp tớ vượt qua những ngày tháng ôn thi mệt mỏi nhất ( cảm động chưa :)) ).\n\nGiờ thì chỉ còn vài bước nữa là đến kỳ thi quyết định rồi. Tớ không chúc cậu áp lực quá đâu, tớ chỉ mong cậu hãy cứ là chính mình, hãy tự tin và luôn tỏa sáng. Hãy giữ lấy cái sự lạc quan này để đối mặt với mọi đề bài, dù là khó nhằn nhất nhé. Tớ tin với sự nhạy bén và nỗ lực của cậu, kỳ thi này sẽ không làm khó được Thảo Uyên đâu. Chúc cậu sẽ đỗ nv1 nhưng mà làm " người nhân văn " cũng được hehehe\n\nCố gắng hết sức mình để không phải nuối tiếc bất cứ điều gì nhé. Chúc cậu thi thật tốt, đạt kết quả thật cao và sớm hiện thực hóa được ước mơ của mình.\n\nCảm ơn vì đã cùng tớ tạo nên một năm học cuối cấp rực rỡ và đầy ắp tiếng cười. Cố lên nhé, "Lè Khe" của tớ! Tạm Biệt và Hẹn Gặp Lại....` },
-            'Mỹ Linh': { pass: '1310', content: `Dear Mỹ Linh ( Mỹ L...) \n\nChẳng biết từ bao giờ mà cái tên của cậu lại trở nên đặc biệt trong tâm trí tớ như thế. Tính ra chúng mình mới chỉ biết nhau vỏn vẹn một năm thôi, nhưng ngần ấy thời gian đã đủ để tớ nhận ra, cậu là một mảnh ghép thật rực rỡ và ấm áp trong thanh xuân của tớ. Có lex duyên số đã không để chúng ta có thể gặp nhau sớm hơn huhuhuu nhưng may mắn chúng ta cũng đã có 1 năm học gắn bó cùng với nhau :<<\n\nẤn tượng đầu tiên về cậu là một người bạn siêu giỏi tiếng Anh – môn học mà tớ tự nhận mình "ngu" (hí hí). Thời gian đầu mới quen, tớ vẫn còn chút rụt rè nên chúng mình chẳng nói chuyện với nhau được mấy câu. Nhưng rồi, chính sự cởi mở, vui tính và nụ cười "há há" vô tư của cậu đã dần xóa tan mọi khoảng cách. Cảm ơn cậu vì đã luôn thân thiện, hòa đồng và bắt chuyện với tớ.\n\nThời gian trôi qua nhanh thật đấy, ngoảnh đi ngoảnh lại đã sắp đến lúc mỗi người một hành trình mới. Tớ viết thư này, trước hết là để chúc cậu thật bình tĩnh, tự tin và đạt kết quả cao nhất trong kỳ thi sắp tới. Cánh cửa Đại học đang chờ đón một cô gái tài năng như cậu, và tớ tin chắc cậu sẽ chinh phục được nó thôi ( vn1 )!\n\nÀ, còn một điều quan trọng nữa, "nhả vía" học giỏi tiếng Anh cho tớ với nhé! Hè này tớ cũng lên dây cót tinh thần để cày cuốc TOEIC rồi, rất cần một chút năng lượng tích cực và may mắn từ "cao thủ" như cậu đấy.\n\nDù sau này mỗi người một hướng, tớ vẫn mong cậu luôn giữ mãi nụ cười rạng rỡ và sự lạc quan này. Chúc cậu thi tốt, đạt nguyện vọng và luôn thành công trên con đường mình chọn.\n\nCố lên nhé, Mỹ Linh! Cũng xin lỗi cậu vì đã kí áo cậu hơi ít mong cậu có thể tha thứ cho kẻ bất tài vô dụng này :))\n\nHy vọng lá thư này sẽ giúp Hải truyền tải được hết tình cảm và sự ngưỡng mộ của mình tới Mỹ Linh. Xin chào tạm biệt và hẹn gặp lại vào 1 ngày không xa vào HCM alo có anh lớn đón tận nơi nhen` },
-            
-            // ĐÃ THAY ĐỔI MẬT KHẨU VÀ GỠ BỎ HÌNH ẢNH NHƯ YÊU CẦU
+            'Mỹ Linh': { pass: '1310', content: `Dear Mỹ Linh ( Mỹ L...) \n\nChẳng biết từ bao giờ mà cái tên của cậu lại trở nên đặc biệt trong tâm trí tớ như thế. Tính ra chúng mình mới chỉ biết nhau vỏn vẹn một năm thôi, nhưng ngần ấy thời gian đã đủ để tớ nhận ra, cậu là một mảnh ghép thật rực rỡ và ấm áp trong thanh xuân của tớ. Có lex duyên số đã không để chúng ta có thể gặp nhau sớm hơn huhuhuu nhưng may mắn chúng ta cũng đã có 1 năm học gắn bó cùng với nhau :<<\n\nẤn tượng đầu tiên về cậu là một người bạn siêu giỏi tiếng Anh – môn học mà tớ tự nhận mình "ngu" (hí hí). Thời gian đầu mới quen, tớ vẫn còn chút rụt rè nên chúng mình chẳng nói chuyện với nhau được mấy câu. Nhưng rồi, chính sự cởi mở, vui tính và nụ cười "há há" vô tư của cậu đã dần xóa tan mọi khoảng cách. Cảm ơn cậu vì đã luôn thân thiện, hòa đồng và bắt chuyện với tớ.\n\nThời gian trôi qua nhanh thật đấy, ngoảnh đi ngoảnh lại đã sắp đến lúc mỗi người một hành trình mới. Tớ viết thư này, trước hết là để chúc cậu thật bình tĩnh, tự tin và đạt kết quả cao nhất trong kỳ thi sắp tới. Cánh cửa Đại học đang chờ đón một cô gái tài năng như cậu, và tớ tin chắc cậu sẽ chinh phục được nó thôi ( vn1 )!\n\nÀ, còn một điều quan dụng nữa, "nhả vía" học giỏi tiếng Anh cho tớ với nhé! Hè này tớ cũng lên dây cót tinh thần để cày cuốc TOEIC rồi, rất cần một chút năng lượng tích cực và may mắn từ "cao thủ" như cậu đấy.\n\nDù sau này mỗi người một hướng, tớ vẫn mong cậu luôn giữ mãi nụ cười rạng rỡ và sự lạc quan này. Chúc cậu thi tốt, đạt nguyện vọng và luôn thành công trên con đường mình chọn.\n\nCố lên nhé, Mỹ Linh! Cũng xin lỗi cậu vì đã kí áo cậu hơi ít mong cậu có thể tha thứ cho kẻ bất tài vô dụng này :))\n\nHy vọng lá thư này sẽ giúp Hải truyền tải được hết tình cảm và sự ngưỡng mộ của mình tới Mỹ Linh. Xin chào tạm biệt và hẹn gặp lại vào 1 ngày không xa vào HCM alo có anh lớn đón tận nơi nhen` },
             'Phương Uyên': { 
                 pass: 'bongxinhiu', 
                 content: `Chào Phương Uyên,\n\nChắc cậu sẽ hơi bất ngờ khi nhận được mấy dòng này từ tớ nhỉ? Tụi mình mới bắt đầu thân nhau gần đây thôi, nhưng tớ cứ muốn viết gì đó để ghi lại chút kỷ niệm trước khi cả đứa cùng bước vào giai đoạn quan trọng này.\n\nThú thật với cậu, ngay từ những ngày đầu mới vào lớp, tớ đã cực kỳ ấn tượng với cậu. Không chỉ vì cậu xinh đẹp hay vui vẻ đâu, mà cái làm tớ nể nhất chính là phong thái và cách cậu đứng ra lo liệu, dẫn dắt cả lớp mình. Nhìn cậu làm việc tớ thấy "ngầu" thật sự, đúng chất một người có tố chất lãnh đạo, nhìn là thấy tin tưởng ngay. :))\n\nDù tụi mình chưa có quá nhiều thời gian để chơi với nhau sâu đậm, nhưng chỉ cần vài lần tiếp xúc là tớ đã thấy quý sự thoải mái và cái cách cậu đối xử với mọi người rồi. Hy vọng là sau này, dù mỗi đứa mỗi hướng, cậu vẫn sẽ nhớ đến tớ như một người bạn đã từng học chung lớp, cùng nhau đi qua quãng thời gian đáng nhớ này.\n\nSắp thi cử đến nơi rồi, tớ chúc cậu ôn thi thật gì nhỉ thật gọi là vippro, giữ vững cái phong thái tự tin như mọi khi để làm bài thật tốt nhé. Chúc cho cậu sau này sẽ luôn tỏa sáng, cứ giữ mãi sự tự tin đó để gặt hái được những thành công rực rỡ trên con đường mình chọn.\n\nCảm ơn vì đã là một phần rất ấn tượng trong năm học của tớ, Phương Uyên nhé!` 
             },
-            
-            // CẬP NHẬT RIÊNG CHO ANH DUY
             'Anh Duy': { 
                 pass: '0807', 
                 theme: 'fire-background',
                 textEffect: 'rainbow-text',
                 openEffect: 'envelope-open',
-                content: `Chào Anh Duy (Duy best), chàng trai "cute phô mai que hột me xí muội" của tớ, tớ là Hẻ đây. Thấm thoát mà những ngày tháng cuối cùng của thời học sinh cũng đã khép lại, nhìn lại chặng đường đã qua, tớ mới thấy tụi mình có một cái duyên thật diệu kỳ. Suốt 11 năm học ròng rã, tụi mình như hai người xa lạ đi qua chả thèm ngó lại :)) , lướt qua nhau chẳng một chút ấn tượng, vậy mà đùng một cái, vào năm học cuối cùng đầy hoài niệm này, ông trời lại sắp đặt để tụi mình được ngồi chung một lớp. Tớ thầm nghĩ, có lẽ thanh xuân không muốn tụi mình bỏ lỡ nhau, và định mệnh cũng chẳng đành lòng ngăn cách một tình bạn đẹp đến thế. Cảm ơn Anh Duy thật nhiều vì thời gian qua đã bước vào cuộc sống của tớ và làm bạn với tớ nhé. Thời gian qua tớ luôn cảm nhận được sự ấm áp từ một người bạn vô cùng vui tính, hòa đồng, người đã dùng tiếng cười của mình để xua tan đi những áp lực, mệtỏi của những ngày ôn thi. Cảm ơn cậu vì đã là một phần rực rỡ nhất trong năm lớp 12 của tớ, để khi ngoảnh lại, tớ không chỉ nhớ đến bài vở mà còn nhớ đến một người bạn tuyệt vời như cậu. Trước mắt tụi mình là trận chiến lớn rồi, chúc Anh Duy của tớ sẽ thật bình tĩnh, tự tin, làm bài thật tốt và vượt vũ môn thành công rực rỡ. Mai này mỗi đứa một phương, bận rộn với bầu trời riêng, nhưng tớ tin cậu sẽ luôn vững vàng và chạm tay đến ước mơ trên con đường mình đã chọn. Cảm ơn cậu vì đã xuất hiện trong những năm tháng thanh xuân của tớ!` 
+                content: `Chào Anh Duy (Duy best), chàng trai "cute phô mai que hột me xí muội" của tớ, tớ là Hẻ đây. Thấm thoát mà những ngày tháng cuối cùng của thời học sinh cũng đã khép lại, nhìn lại chặng đường đã qua, tớ mới thấy tụi mình có một cái duyên thật diệu kỳ. Suốt 11 năm học ròng rã, tụi mình như hai người xa lạ đi qua chả thèm ngó lại :)) , lướt qua nhau chẳng một chút ấn tượng, vậy mà đùng một cái, vào năm học cuối cùng đầy hoài niệm này, ông trời lại sắp đặt để tụi mình được ngồi chung một lớp. Tớ thầm nghĩ, có lẽ thanh xuân không muốn tụi mình bỏ lỡ nhau, và định mệnh cũng chẳng đành lòng ngăn cách một tình bạn đẹp đến thế. Cảm ơn Anh Duy thật nhiều vì thời gian qua đã bước vào cuộc sống của tớ và làm bạn với tớ nhé. Thời gian qua tớ luôn cảm nhận được sự ấm áp từ một người bạn vô cùng vui tính, hòa đồng, người đã dùng tiếng cười của mình để xua tan đi những áp lực, mệt mỏi của những ngày ôn thi. Cảm ơn cậu vì đã là một phần rực rỡ nhất trong năm lớp 12 của tớ, để khi ngoảnh lại, tớ không chỉ nhớ đến bài vở mà còn nhớ đến một người bạn tuyệt vời như cậu. Trước mắt tụi mình là trận chiến lớn rồi, chúc Anh Duy của tớ sẽ thật bình tĩnh, tự tin, làm bài thật tốt và vượt vũ môn thành công rực rỡ. Mai này mỗi đứa một phương, bận rộn với bầu trời riêng, nhưng tớ tin cậu sẽ luôn vững vàng và chạm tay đến ước mơ trên con đường mình đã chọn. Cảm ơn cậu vì đã xuất hiện trong những năm tháng thanh xuân của tớ!` 
             },
-
-            // Các thành viên khác
+            'Uyên Xèo': {
+                pass: '2002',
+                theme: 'beautiful-background',
+                openEffect: 'envelope-open',
+                content: `Chào Uyên Xèo,\n\nNhững dòng này tớ viết không phải vì chúng mình đã gắn bó với nhau suốt cả một thời học trò, mà vì tớ cảm thấy thật may mắn khi cái "duyên" cuối cùng đã đưa chúng mình về chung một lớp, để từ hai người lạ, tớ được biết đến cậu.\n\nCó lẽ ông trời chẳng bao giờ khép lại mọi cánh cửa, vì nếu không có năm học cuối này, chắc gì tớ đã biết đến một cô gái dễ thương, hiền lành và vui tính như cậu. Dù một năm học có thể là quá ngắn ngủi so với những người bạn khác để có thể hiểu hết về nhau, nhưng chừng ấy thời gian cũng đủ để tớ nhận ra những nét tính cách tuyệt vời đó ở cậu. Những lời này hoàn toàn là cảm nhận thật lòng từ tớ đấy nhé! :))\n\nThanh xuân mà, ai rồi cũng phải bước tiếp trên những con đường riêng. Dù sau này có đi đâu, về đâu, tớ chỉ muốn gửi tới cậu lời chúc chân thành nhất: Mong cậu sẽ luôn vững bước, kiên cường và gặt hái được thật nhiều thành công trên hành trình mà cậu đã chọn.\n\nHy vọng rằng trong tương lai, khi có dịp gặp lại, chúng mình đều đã trở thành những phiên bản tốt nhất của chính mình. Khi ấy, chắc chắn chúng mình vẫn sẽ nhận ra nhau và mỉm cười với những kỷ niệm đã qua, cậu nhỉ?\n\nTạm biệt cậu, và hẹn gặp lại Uyên vào một ngày không xa nhé! Hihi.`
+            },
             'Hà An': { pass: '1007', content: `Chào Hà An,\n\nThời gian trôi qua nhanh quá cậu nhỉ? Mới ngày nào tụi mình còn là những đứa trẻ nhỏ xíu, vô tư chơi đùa cùng nhau, vậy mà chớp mắt một cái, đây đã là lần cuối cùng chúng ta có thể đồng hành với tư cách là những người bạn cùng lớp.\n\nTớ luôn cảm thấy bản thân thật may mắn khi vào năm học cuối cùng của thời học sinh, định mệnh lại một lần nữa đưa tớ và cậu học chung 1 lớp. Nhưng có lẽ, một năm học là quá ngắn ngủi trước dòng chảy gấp gáp của thời gian. Đôi lúc ngoảnh lại, tớ chợt chạnh lòng vì nhận ra tụi mình chưa kịp có với nhau thật nhiều kỷ niệm, chưa kịp trò chuyện nhiều hơn để lấp đầy những khoảng trống của năm tháng trôi qua.\n\nDẫu vậy, qua từng ấy năm quen biết và đặc biệt là quãng thời gian học cùng nhau vừa qua, tớ đã kịp lưu giữ cho riêng mình một hình ảnh rất đẹp về cậu. Trong mắt tớ, Hà An là một người vô cùng vui vẻ, ấm áp. Cậu lúc nào cũng lặng lẽ lo lắng, quan tâm đến mọi người xung quanh và làm bất cứ việc gì cũng rất chu đáo, vẹn toàn. Sự tử tế và tinh tế ấy của cậu là điều khiến tớ vô cùng trân trọng.\n\nSau mùa hè này, hai chúng ta sẽ bước đi trên hai ngã rẽ hoàn toàn khác nhau, tự đối mặt với những thử thách mới ở những bầu trời riêng. Tớ chỉ mong dù con đường phía trước có ra sao, Hà An vẫn có thể vững bước, luôn kiên cường, tự tin và hạnh phúc với lựa chọn của bản thân.\n\nCảm ơn cậu vì đã là một phần ý nghĩa trong những năm tháng thanh xuân của tớ.\n\nTạm biệt cậu, và hẹn gặp lại chúng ta ở một ngày mai thật rực rỡ! BAV` },
             'Duy Vũ': { pass: '3333', content: 'Chào Duy Vũ,\n\nLời nhắn cho Duy Vũ...\nThi thật tốt và bình tĩnh nha!' },
             'Quang Bảo': { pass: '4444', content: 'Chào Quang Bảo,\n\nLời nhắn cho Quang Bảo...\nThi thật tốt và bình tĩnh nha!' },
@@ -520,17 +633,96 @@
         }
         createBubbles();
 
-        // --- HÀM BẮT ĐẦU APP (SAU KHI ẤN XEM NGAY) ---
+        // --- ẤN XEM NGAY -> CHUYỂN QUA TRANG ĐĂNG KÝ/ĐĂNG NHẬP ---
         function startApp() {
             const intro = document.getElementById('intro-screen');
             intro.style.transform = 'translateY(-100%)';
             
-            const main = document.getElementById('main-content');
-            main.style.opacity = '1';
-            document.body.style.overflow = 'auto';
+            // Hiện trang Auth
+            document.getElementById('auth-screen').style.display = 'flex';
 
             const music = document.getElementById('bgMusic');
             music.play().catch(() => console.log("Yêu cầu tương tác để phát nhạc"));
+        }
+
+        // --- CHUYỂN ĐỔI FORM ĐĂNG NHẬP / ĐĂNG KÝ ---
+        function toggleAuthForm(formType) {
+            document.getElementById('login-error').innerText = '';
+            document.getElementById('register-error').innerText = '';
+            document.getElementById('register-success').innerText = '';
+            
+            if (formType === 'register') {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('register-box').style.display = 'block';
+            } else {
+                document.getElementById('login-box').style.display = 'block';
+                document.getElementById('register-box').style.display = 'none';
+            }
+        }
+
+        // --- XỬ LÝ ĐĂNG KÝ ---
+        function handleRegister() {
+            const user = document.getElementById('register-username').value.trim();
+            const pass = document.getElementById('register-password').value;
+            const errorDiv = document.getElementById('register-error');
+            const successDiv = document.getElementById('register-success');
+
+            errorDiv.innerText = '';
+            successDiv.innerText = '';
+
+            if (!user || !pass) {
+                errorDiv.innerText = 'Vui lòng điền đầy đủ tài khoản và mật khẩu! ❌';
+                return;
+            }
+
+            // Lấy danh sách tài khoản hiện có trong localStorage
+            let accounts = JSON.parse(localStorage.getItem('user_accounts')) || {};
+
+            if (accounts[user]) {
+                errorDiv.innerText = 'Tài khoản này đã tồn tại rồi! ❌';
+                return;
+            }
+
+            // Lưu tài khoản mới
+            accounts[user] = pass;
+            localStorage.setItem('user_accounts', JSON.stringify(accounts));
+
+            successDiv.innerText = 'Đăng ký thành công! Đang chuyển sang Đăng nhập... ✨';
+            
+            // Xóa dữ liệu input cũ
+            document.getElementById('register-username').value = '';
+            document.getElementById('register-password').value = '';
+
+            setTimeout(() => {
+                toggleAuthForm('login');
+            }, 1500);
+        }
+
+        // --- XỬ LÝ ĐĂNG NHẬP ---
+        function handleLogin() {
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            errorDiv.innerText = '';
+
+            if (!user || !pass) {
+                errorDiv.innerText = 'Vui lòng nhập đầy đủ thông tin! ❌';
+                return;
+            }
+
+            let accounts = JSON.parse(localStorage.getItem('user_accounts')) || {};
+
+            // Kiểm tra thông tin tài khoản
+            if (accounts[user] && accounts[user] === pass) {
+                // Vào giao diện chính
+                document.getElementById('auth-screen').style.display = 'none';
+                const main = document.getElementById('main-content');
+                main.style.opacity = '1';
+                document.body.style.overflow = 'auto';
+            } else {
+                errorDiv.innerText = 'Tài khoản hoặc Mật khẩu không chính xác! ❌';
+            }
         }
 
         // --- CHUYỂN TAB ---
@@ -541,7 +733,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- MODAL PASS ---
+        // --- MODAL PASS TỪNG THƯ BÊN TRONG ---
         function openPassModal(name) {
             currentTarget = name;
             document.getElementById('modal-target-name').innerText = "Gửi " + name;
@@ -566,18 +758,17 @@
             }
         }
 
-        // --- HÀM MỞ THƯ ĐÃ ĐƯỢC NÂNG CẤP ĐỂ HIỂN THỊ CÁC HIỆU ỨNG ĐẶC BIỆT ---
+        // --- HÀM MỞ THƯ VÀ HIỂN THỊ HIỆU ỨNG ĐẶC BIỆT ---
         function openLetter(name) {
             const letterTitle = document.getElementById('letter-title');
             const letterText = document.getElementById('letter-text');
             const modalBox = document.getElementById('letter-modal-box');
             const currentUser = data[name];
 
-            // Gán dữ liệu cơ bản
             letterTitle.innerText = "Thư gửi " + name;
             letterText.innerText = currentUser.content;
 
-            // Reset tất cả các class hiệu ứng cũ để không bị dính sang người khác
+            // Reset tất cả các class hiệu ứng cũ
             letterTitle.className = '';
             letterText.className = 'letter-content';
             modalBox.className = 'modal-content';
@@ -597,12 +788,15 @@
                 modalBox.classList.add(currentUser.openEffect);
             }
 
-            // Xử lý hiệu ứng Nền (Nền rực lửa)
+            // Xử lý hiệu ứng Nền riêng biệt
             if (currentUser.theme === 'fire-background') {
                 letterText.classList.add(currentUser.theme);
-                // Giúp chữ vẫn đọc được trên nền lửa tối màu
                 letterText.style.color = '#fff';
                 letterText.style.textShadow = '1px 1px 3px #000';
+            } else if (currentUser.theme === 'beautiful-background') {
+                letterText.classList.add(currentUser.theme);
+                letterText.style.color = '#fff';
+                letterText.style.textShadow = '1px 1px 4px rgba(0,0,0,0.6)';
             }
 
             document.getElementById('letterModal').style.display = 'flex';
